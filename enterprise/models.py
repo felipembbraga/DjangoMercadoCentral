@@ -1,10 +1,11 @@
 #-*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from django.conf import settings
 from django.db import models
 from django.db.models.signals import post_save
-
 from django.dispatch import receiver
+from django.utils.safestring import mark_safe
 
 
 class App(models.Model):
@@ -16,6 +17,12 @@ class App(models.Model):
     def __unicode__(self):
         return unicode(self.name)
 
+    def image_tag(self):
+        return mark_safe(u'<img src="%s" />' % (settings.MEDIA_URL + str(self.logo)))
+
+    image_tag.short_description = 'Logomarca'
+
+
 class Contact(models.Model):
     app = models.ForeignKey(App, verbose_name='App')
     name = models.CharField(max_length=100)
@@ -23,9 +30,9 @@ class Contact(models.Model):
     email = models.EmailField()
     main_contact = models.BooleanField()
 
+
 # signal para contato
 @receiver(post_save, sender=Contact)
 def contact_post_save(sender, instance, created, **kwargs):
     if instance.main_contact:
         sender.objects.filter(app=instance.app).exclude(pk=instance.pk).update(main_contact=False)
-

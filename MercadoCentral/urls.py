@@ -20,6 +20,8 @@ from django.contrib.auth.models import User
 from django.views.static import serve
 from rest_framework import routers, serializers, viewsets
 from enterprise.models import App
+from appdata.models import Product
+from .site import site as mc_site
 
 
 # Serializers define the API representation.
@@ -28,28 +30,52 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
         model = User
         fields = ('url', 'username', 'email', 'is_staff')
 
+
+class ProductSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Product
+        fields = ["id",
+                  "reference",
+                  "title",
+                  "short_description",
+                  "description",
+                  "is_active",
+                  "enterprise",
+                  "get_images"]
+
+
 class AppSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = App
         fields = ('name', 'logo', 'code', 'test')
+
 
 # ViewSets define the view behavior.
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
+
+class ProductViewSet(viewsets.ModelViewSet):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+
+
 class AppViewSet(viewsets.ModelViewSet):
     queryset = App.objects.all()
     serializer_class = AppSerializer
 
+
 # Routers provide an easy way of automatically determining the URL conf.
 router = routers.DefaultRouter()
 router.register(r'users', UserViewSet)
+router.register(r'products', ProductViewSet)
 router.register(r'apps', AppViewSet)
 
 urlpatterns = [
     url(r'^api/', include(router.urls)),
     url(r'^admin/', admin.site.urls),
+    url(r'^mc_admin/', mc_site.urls),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework'))
 ]
 
