@@ -2,7 +2,6 @@
 .idea
 *.iml
 out
-gen### Python template
 __pycache__/
 *.py[cod]
 *$py.class
@@ -76,3 +75,4 @@ crashlytics.properties
 crashlytics-build.properties
 fabric.properties
 media/*
+*.sqlite3
