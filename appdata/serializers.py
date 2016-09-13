@@ -15,6 +15,7 @@ class ProductSerializer(serializers.HyperlinkedModelSerializer):
                   'enterprise',
                   'get_images',
                   'get_sections',
+                  'get_thumbnail',
                   'sections']
 
 
