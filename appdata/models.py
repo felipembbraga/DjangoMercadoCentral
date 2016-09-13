@@ -51,6 +51,9 @@ class Product(models.Model):
     def get_images(self):
         return serializers.serialize('json', self.productimage_set.all(), fields=('image', 'caption', 'main_image'))
 
+    def get_thumbnail(self):
+        return serializers.serialize('json', self.productimage_set.filter(main_image=True), fields=('image', 'caption'))
+
     def get_sections(self):
         return serializers.serialize('json', self.sections.all(), fields=('reference', 'title', 'icon', 'type', 'is_active'))
 
