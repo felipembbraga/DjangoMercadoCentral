@@ -143,6 +143,8 @@ MEDIA_ROOT = LOCAL('media')
 
 MEDIA_URL = '/media/'
 
+STATIC_ROOT = LOCAL('static')
+
 STATIC_URL = '/static/'
 
 REST_FRAMEWORK = {
