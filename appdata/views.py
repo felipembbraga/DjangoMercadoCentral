@@ -11,7 +11,7 @@ class ProductViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = ProductSerializer
 
     @list_route(methods=['get'])
-    def section_products(self, request):
+    def section_products(self, request, format=None):
         section = request.GET.get('section')
         reference = request.GET.get('reference')
         if not section and not reference:
