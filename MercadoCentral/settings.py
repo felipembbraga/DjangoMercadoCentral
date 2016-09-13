@@ -31,10 +31,12 @@ ALLOWED_HOSTS = []
 
 # Application definition
 LOCAL_APPS = [
-    'enterprise'
+    'enterprise',
+    'appdata.apps.AppdataConfig'
 ]
 
 INSTALLED_APPS = [
+    'djangobower',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -119,6 +121,19 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
+
+STATICFILES_FINDERS = [
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    'djangobower.finders.BowerFinder',
+]
+
+BOWER_COMPONENTS_ROOT = LOCAL('components')
+BOWER_INSTALLED_APPS = (
+    'lodash',
+    'ionicons'
+
+)
 
 
 # Static files (CSS, JavaScript, Images)
