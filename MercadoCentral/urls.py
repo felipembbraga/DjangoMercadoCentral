@@ -18,9 +18,11 @@ from django.conf.urls import url, include
 from django.contrib import admin
 from django.contrib.auth.models import User
 from django.views.static import serve
-from rest_framework import routers, serializers, viewsets
-from enterprise.models import App
+from rest_framework import routers, serializers
+
 from appdata.models import Product
+from appdata.views import ProductViewSet, SectionViewSet
+from enterprise.views import AppViewSet
 from .site import site as mc_site
 
 
@@ -34,43 +36,23 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
 class ProductSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Product
-        fields = ["id",
-                  "reference",
-                  "title",
-                  "short_description",
-                  "description",
-                  "is_active",
-                  "enterprise",
-                  "get_images"]
-
-
-class AppSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = App
-        fields = ('name', 'logo', 'code', 'test')
-
-
-# ViewSets define the view behavior.
-class UserViewSet(viewsets.ModelViewSet):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
-
-
-class ProductViewSet(viewsets.ModelViewSet):
-    queryset = Product.objects.all()
-    serializer_class = ProductSerializer
-
-
-class AppViewSet(viewsets.ModelViewSet):
-    queryset = App.objects.all()
-    serializer_class = AppSerializer
+        fields = ['id',
+                  'reference',
+                  'title',
+                  'short_description',
+                  'description',
+                  'is_active',
+                  'enterprise',
+                  'get_images',
+                  'get_sections',
+                  'sections']
 
 
 # Routers provide an easy way of automatically determining the URL conf.
 router = routers.DefaultRouter()
-router.register(r'users', UserViewSet)
 router.register(r'products', ProductViewSet)
 router.register(r'apps', AppViewSet)
+router.register(r'sections', SectionViewSet)
 
 urlpatterns = [
     url(r'^api/', include(router.urls)),
