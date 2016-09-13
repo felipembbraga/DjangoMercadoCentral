@@ -47,7 +47,7 @@ INSTALLED_APPS = [
     'rest_framework'
 ]
 
-CORS_ORIGIN_ALLOW_ALL = False
+CORS_ORIGIN_ALLOW_ALL = True
 
 INSTALLED_APPS += LOCAL_APPS
 
