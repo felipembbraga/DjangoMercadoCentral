@@ -13,10 +13,10 @@ class ProductSerializer(serializers.HyperlinkedModelSerializer):
                   'description',
                   'is_active',
                   'enterprise',
-                  'get_images',
+                  'images',
                   'get_sections',
-                  'get_thumbnail',
-                  'sections']
+                  'thumbnail'
+                  ]
 
 
 class SectionSerializer(serializers.HyperlinkedModelSerializer):

@@ -2,11 +2,15 @@
 
 from __future__ import unicode_literals
 
+import json
+
 from django.core import serializers
 from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.forms import model_to_dict
 
+from MercadoCentral.utils import GetSerializeMixin
 from enterprise.models import App
 
 SECTION_TYPES = [
@@ -14,6 +18,12 @@ SECTION_TYPES = [
     (1, 'Página estática'),
     (2, 'Contato'),
 ]
+
+
+class ActiveManager(models.Manager):
+    def get_queryset(self):
+        queryset = super(ActiveManager, self).get_queryset()
+        return queryset.filter(is_active=True)
 
 
 class Section(models.Model):
@@ -32,7 +42,14 @@ class Section(models.Model):
         return unicode(self.title)
 
 
-class Product(models.Model):
+class ActiveSection(Section):
+    objects = ActiveManager()
+
+    class Meta:
+        proxy = True
+
+
+class Product(models.Model, GetSerializeMixin):
     enterprise = models.ForeignKey(App, verbose_name='Aplicativo')
     reference = models.CharField(u'referência', max_length=20)
     title = models.CharField(u'título', max_length=50)
@@ -48,14 +65,28 @@ class Product(models.Model):
     def __unicode__(self):
         return unicode(self.title)
 
-    def get_images(self):
-        return serializers.serialize('json', self.productimage_set.all(), fields=('image', 'caption', 'main_image'))
+    @property
+    def images(self):
+        serializer = serializers.serialize('json', self.productimage_set.all(), fields=('image', 'caption', 'main_image'))
+        return self.serialize(serializer)
 
-    def get_thumbnail(self):
-        return serializers.serialize('json', self.productimage_set.filter(main_image=True), fields=('image', 'caption'))
 
+    def thumbnail(self):
+        serializer = serializers.serialize('json', self.productimage_set.filter(main_image=True),
+                                           fields=('image', 'caption'))
+        return self.serialize(serializer, True)
+
+    @property
     def get_sections(self):
-        return serializers.serialize('json', self.sections.all(), fields=('reference', 'title', 'icon', 'type', 'is_active'))
+        serializer = serializers.serialize('json', self.sections.all(),
+                                           fields=('reference', 'title', 'icon', 'type', 'is_active'))
+        return self.serialize(serializer)
+
+
+class ActiveProduct(Product):
+    objects = ActiveManager()
+    class Meta:
+        proxy = True
 
 
 def product_directory_path(instance, filename):
@@ -78,3 +109,13 @@ class ProductImage(models.Model):
 def contact_post_save(sender, instance, created, **kwargs):
     if instance.main_image:
         sender.objects.filter(product=instance.product).exclude(pk=instance.pk).update(main_image=False)
+
+
+class Highlight(models.Model):
+    enterprise = models.ForeignKey(App, verbose_name='Aplicativo')
+    reference = models.CharField(u'referência', max_length=20)
+    title = models.CharField(u'título', max_length=50)
+    description = models.TextField(u'Descrição', null=True, blank=True)
+    is_active = models.BooleanField(u'ativo', default=False)
+    section = models.ForeignKey(Section)
+    product = models.ForeignKey(Product, null=True, blank=True)
