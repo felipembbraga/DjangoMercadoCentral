@@ -104,6 +104,7 @@ class ProductImage(models.Model):
         verbose_name_plural = 'imagens do produto'
 
 
+
 # signal para contato
 @receiver(post_save, sender=ProductImage)
 def contact_post_save(sender, instance, created, **kwargs):
