@@ -1,21 +1,22 @@
 from rest_framework import viewsets
-from rest_framework.decorators import list_route, detail_route
+from rest_framework.decorators import list_route
 from rest_framework.response import Response
 
+from MercadoCentral.viewset import MCReadOnlyModelViewSet
 from appdata.models import Product, Section
 from appdata.serializers import ProductSerializer, SectionSerializer
 
 
-class ProductViewSet(viewsets.ReadOnlyModelViewSet):
+class ProductViewSet(MCReadOnlyModelViewSet):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
 
     @list_route(methods=['get'])
-    def section_products(self, request, format=None):
+    def section_products(self, request, format=None, *args, **kwargs):
         section = request.GET.get('section')
         reference = request.GET.get('reference')
         if not section and not reference:
-            return self.list(request=request)
+            return self.list(request=request, format=format, *args, **kwargs)
         lookups = {}
         section and lookups.update({'sections__pk': int(section)}) or None
         reference and lookups.update({'sections__reference__exact': reference}) or None
@@ -29,6 +30,7 @@ class ProductViewSet(viewsets.ReadOnlyModelViewSet):
         return Response(serializer.data)
 
 
-class SectionViewSet(viewsets.ModelViewSet):
+class SectionViewSet(MCReadOnlyModelViewSet):
     queryset = Section.objects.all()
     serializer_class = SectionSerializer
+
