@@ -2,13 +2,18 @@
 from __future__ import unicode_literals
 
 from django.conf import settings
+from django.core import serializers
 from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils.safestring import mark_safe
+from django.utils.six import BytesIO
+from rest_framework.parsers import JSONParser
+
+from MercadoCentral.utils import GetSerializeMixin
 
 
-class App(models.Model):
+class App(models.Model, GetSerializeMixin):
     name = models.CharField('nome', max_length=150)
     code = models.CharField(u'código', max_length=100)
     logo = models.ImageField('logomarca', upload_to='app_logo')
@@ -19,6 +24,12 @@ class App(models.Model):
 
     def image_tag(self):
         return mark_safe(u'<img src="%s" />' % (settings.MEDIA_URL + str(self.logo)))
+
+    @property
+    def sections(self):
+        serializer = serializers.serialize('json', self.section_set.all(),
+                                     fields=('reference', 'title', 'icon', 'type', 'is_active'))
+        return self.serialize(serializer)
 
     image_tag.short_description = 'Logomarca'
 

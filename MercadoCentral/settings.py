@@ -67,7 +67,9 @@ ROOT_URLCONF = 'MercadoCentral.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [
+            LOCAL('templates'),
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

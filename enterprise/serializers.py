@@ -6,4 +6,4 @@ from enterprise.models import App
 class AppSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = App
-        fields = ('name', 'logo', 'code')
+        fields = ('name', 'logo', 'code', 'sections')
