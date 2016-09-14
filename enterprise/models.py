@@ -23,7 +23,10 @@ class App(models.Model, GetSerializeMixin):
         return unicode(self.name)
 
     def image_tag(self):
-        return mark_safe(u'<img src="%s" />' % (settings.MEDIA_URL + str(self.logo)))
+        if not self.logo:
+            return ''
+
+        return mark_safe(u'<img src="%s" width="100"/>' % (settings.MEDIA_URL + str(self.logo)))
 
     @property
     def sections(self):
