@@ -30,6 +30,14 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='section',
             name='type',
-            field=models.IntegerField(choices=[(0, 'Lista de produtos'), (1, 'P\xe1gina est\xe1tica'), (2, 'Contato')], default=1, verbose_name='tipo'),
+            field=models.IntegerField(
+                choices=[
+                    (0, 'Lista de produtos'),
+                    (1, 'P\xe1gina est\xe1tica'),
+                    (2, 'Contato')
+                ],
+                default=1,
+                verbose_name='tipo'
+            ),
         ),
     ]

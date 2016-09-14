@@ -38,8 +38,8 @@ class Section(models.Model):
         verbose_name = u'Seção'
         verbose_name_plural = u'Seções'
 
-    def __unicode__(self):
-        return unicode(self.title)
+    def __str__(self):
+        return str(self.title)
 
 
 class ActiveSection(Section):
@@ -62,14 +62,14 @@ class Product(models.Model, GetSerializeMixin):
         verbose_name = u'Produto'
         unique_together = ('enterprise', 'reference')
 
-    def __unicode__(self):
-        return unicode(self.title)
+    def __str__(self):
+        return str(self.title)
 
     @property
     def images(self):
-        serializer = serializers.serialize('json', self.productimage_set.all(), fields=('image', 'caption', 'main_image'))
+        serializer = serializers.serialize('json', self.productimage_set.all(),
+                                           fields=('image', 'caption', 'main_image'))
         return self.serialize(serializer)
-
 
     def thumbnail(self):
         serializer = serializers.serialize('json', self.productimage_set.filter(main_image=True),
@@ -85,6 +85,7 @@ class Product(models.Model, GetSerializeMixin):
 
 class ActiveProduct(Product):
     objects = ActiveManager()
+
     class Meta:
         proxy = True
 
@@ -102,7 +103,6 @@ class ProductImage(models.Model):
     class Meta:
         verbose_name = 'imagem do produto'
         verbose_name_plural = 'imagens do produto'
-
 
 
 # signal para contato

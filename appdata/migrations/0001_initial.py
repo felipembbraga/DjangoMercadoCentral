@@ -22,7 +22,14 @@ class Migration(migrations.Migration):
                 ('reference', models.CharField(max_length=20)),
                 ('title', models.CharField(max_length=50)),
                 ('icon', models.CharField(max_length=30)),
-                ('enterprise', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='enterprise.App', verbose_name='Aplicativo')),
+                (
+                    'enterprise',
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to='enterprise.App',
+                        verbose_name='Aplicativo'
+                    )
+                ),
             ],
             options={
                 'verbose_name': 'Se\xe7\xe3o',

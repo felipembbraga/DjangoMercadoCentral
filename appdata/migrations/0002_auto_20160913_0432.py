@@ -15,7 +15,11 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='section',
             name='type',
-            field=models.IntegerField(choices=[(0, 'Lista de produtos'), (1, 'P\xe1gina est\xe1tica'), (2, 'Contato')], default=1),
+            field=models.IntegerField(choices=[
+                (0, 'Lista de produtos'),
+                (1, 'P\xe1gina est\xe1tica'),
+                (2, 'Contato')
+            ],default=1),
         ),
         migrations.AlterField(
             model_name='section',
