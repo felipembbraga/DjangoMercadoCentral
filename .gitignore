@@ -75,5 +75,4 @@ crashlytics.properties
 crashlytics-build.properties
 fabric.properties
 media/*
-*.sqlite3
 static/*
