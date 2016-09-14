@@ -28,10 +28,10 @@ class ActiveManager(models.Manager):
 
 class Section(models.Model):
     enterprise = models.ForeignKey(App, verbose_name='Aplicativo')
-    reference = models.CharField(max_length=20)
-    title = models.CharField(max_length=50)
-    icon = models.CharField(max_length=30, null=True, blank=True)
-    type = models.IntegerField(choices=SECTION_TYPES, default=1)
+    reference = models.CharField(u'referência', max_length=20)
+    title = models.CharField(u'título', max_length=50)
+    icon = models.CharField(u'ícone', max_length=30, null=True, blank=True)
+    type = models.IntegerField(u'tipo', choices=SECTION_TYPES, default=1)
     is_active = models.BooleanField('ativo', default=True)
 
     class Meta:
