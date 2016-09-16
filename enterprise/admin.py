@@ -21,6 +21,8 @@ class AppAdmin(admin.ModelAdmin):
     list_filter = ('is_active',)
     fields = ('name', 'code', 'logo', 'is_active')
     readonly_fields = ('image_tag',)
-    formfield_overrides = {
-        models.ImageField: {'widget': MCAdminImageWidget}
-    }
+
+    def formfield_for_dbfield(self, db_field, request, **kwargs):
+        if db_field.name == 'logo':
+            return db_field.formfield(widget=MCAdminImageWidget())
+        return super(AppAdmin, self).formfield_for_dbfield(db_field, request, **kwargs)

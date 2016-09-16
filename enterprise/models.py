@@ -15,7 +15,7 @@ class App(models.Model, GetSerializeMixin):
     name = models.CharField('nome', max_length=150)
     code = models.CharField(u'código', max_length=100)
     logo = models.ImageField('logomarca', upload_to='app_logo')
-    is_active = models.BooleanField('ativo', default=False)
+    is_active = models.BooleanField('ativo', default=True)
 
     def __unicode__(self):
         return unicode(self.name)
