@@ -58,7 +58,8 @@ urlpatterns = [
     url(r'^api/', include(router.urls)),
     url(r'^admin/', admin.site.urls),
     url(r'^mc_admin/', mc_site.urls),
-    url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework'))
+    url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+    url(r'^tinymce/', include('tinymce.urls')),
 ]
 
 if settings.DEBUG:

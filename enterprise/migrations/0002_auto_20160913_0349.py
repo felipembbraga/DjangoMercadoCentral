@@ -45,6 +45,10 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='contact',
             name='app',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='enterprise.App', verbose_name='App'),
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                to='enterprise.App',
+                verbose_name='App'
+            ),
         ),
     ]

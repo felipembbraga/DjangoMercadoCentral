@@ -1,4 +1,4 @@
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
 from django.conf import settings
@@ -7,8 +7,6 @@ from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils.safestring import mark_safe
-from django.utils.six import BytesIO
-from rest_framework.parsers import JSONParser
 
 from MercadoCentral.utils import GetSerializeMixin
 
@@ -17,7 +15,7 @@ class App(models.Model, GetSerializeMixin):
     name = models.CharField('nome', max_length=150)
     code = models.CharField(u'código', max_length=100)
     logo = models.ImageField('logomarca', upload_to='app_logo')
-    is_active = models.BooleanField('ativo', default=False)
+    is_active = models.BooleanField('ativo', default=True)
 
     def __unicode__(self):
         return unicode(self.name)
@@ -31,7 +29,7 @@ class App(models.Model, GetSerializeMixin):
     @property
     def sections(self):
         serializer = serializers.serialize('json', self.section_set.all(),
-                                     fields=('reference', 'title', 'icon', 'type', 'is_active'))
+                                           fields=('reference', 'title', 'icon', 'type', 'is_active'))
         return self.serialize(serializer)
 
     image_tag.short_description = 'Logomarca'

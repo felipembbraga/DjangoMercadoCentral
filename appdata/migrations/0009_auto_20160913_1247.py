@@ -15,6 +15,6 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AlterUniqueTogether(
             name='product',
-            unique_together=set([('enterprise', 'reference')]),
+            unique_together={('enterprise', 'reference')},
         ),
     ]

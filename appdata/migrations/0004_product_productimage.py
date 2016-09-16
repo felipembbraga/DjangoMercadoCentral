@@ -23,7 +23,14 @@ class Migration(migrations.Migration):
                 ('title', models.CharField(max_length=50)),
                 ('short_description', models.CharField(max_length=120)),
                 ('description', models.TextField()),
-                ('enterprise', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='enterprise.App', verbose_name='Aplicativo')),
+                (
+                    'enterprise',
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to='enterprise.App',
+                        verbose_name='Aplicativo'
+                    )
+                ),
             ],
         ),
         migrations.CreateModel(

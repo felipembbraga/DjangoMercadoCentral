@@ -22,7 +22,14 @@ class Migration(migrations.Migration):
                 ('title', models.CharField(max_length=50, verbose_name='t\xedtulo')),
                 ('description', models.TextField(blank=True, null=True, verbose_name='Descri\xe7\xe3o')),
                 ('is_active', models.BooleanField(default=False, verbose_name='ativo')),
-                ('enterprise', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='enterprise.App', verbose_name='Aplicativo')),
+                (
+                    'enterprise',
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to='enterprise.App',
+                        verbose_name='Aplicativo'
+                    )
+                ),
             ],
         ),
         migrations.CreateModel(
@@ -46,7 +53,12 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='highlight',
             name='product',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='appdata.Product'),
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                to='appdata.Product'
+            ),
         ),
         migrations.AddField(
             model_name='highlight',
