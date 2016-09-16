@@ -50,10 +50,8 @@ class ProductAdmin(admin.ModelAdmin):
             ))
         return super(ProductAdmin, self).formfield_for_dbfield(db_field, request, **kwargs)
 
-    def get_inline_formsets(self, request, formsets, inline_instances, obj=None):
-        # if obj is None:
-        #     return []
-        return super(ProductAdmin, self).get_inline_formsets(request, formsets, inline_instances, obj)
+    def get_inline_instances(self, request, obj=None):
+        return obj and super(ProductAdmin, self).get_inline_instances(request, obj) or []
 
     def get_fields(self, request, obj=None):
         fields = super(ProductAdmin, self).get_fields(request, obj)
