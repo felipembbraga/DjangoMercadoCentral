@@ -62,8 +62,8 @@ class Product(models.Model, GetSerializeMixin):
         verbose_name = u'Produto'
         unique_together = ('enterprise', 'reference')
 
-    def __str__(self):
-        return str(self.title)
+    def __unicode__(self):
+        return unicode(self.title)
 
     @property
     def images(self):
