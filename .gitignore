@@ -73,3 +73,4 @@ crashlytics-build.properties
 fabric.properties
 db.sqlite3
 MercadoCentral/static/bower_components/*
+/static/
