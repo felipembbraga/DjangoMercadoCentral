@@ -38,18 +38,27 @@ LOCAL_APPS = [
 INSTALLED_APPS = [
     'corsheaders',
     'djangobower',
+    'django_extensions',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_wysiwyg',
     'rest_framework'
 ]
 
+INSTALLED_APPS += LOCAL_APPS
+
+GRAPH_MODELS = {
+  'all_applications': True,
+  'group_models': True,
+}
+
 CORS_ORIGIN_ALLOW_ALL = True
 
-INSTALLED_APPS += LOCAL_APPS
+DJANGO_WYSIWYG_FLAVOR = "tinymce"    # or "tinymce_advanced"
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

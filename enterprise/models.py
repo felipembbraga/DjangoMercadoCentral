@@ -17,8 +17,8 @@ class App(models.Model, GetSerializeMixin):
     logo = models.ImageField('logomarca', upload_to='app_logo')
     is_active = models.BooleanField('ativo', default=False)
 
-    def __str__(self):
-        return str(self.name)
+    def __unicode__(self):
+        return unicode(self.name)
 
     def image_tag(self):
         if not self.logo:

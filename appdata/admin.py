@@ -1,4 +1,7 @@
 from django.contrib import admin
+from django.db import models
+
+from MercadoCentral.widgets import MCAdminImageWidget
 from .models import Section, Product, ProductImage
 from MercadoCentral.site import register
 
@@ -14,6 +17,9 @@ class ProductImageInline(admin.TabularInline):
     model = ProductImage
     extra = 0
     min_num = 1
+    formfield_overrides = {
+        models.ImageField: {'widget': MCAdminImageWidget}
+    }
 
 
 @register(Product)

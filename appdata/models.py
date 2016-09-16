@@ -38,8 +38,8 @@ class Section(models.Model):
         verbose_name = u'Seção'
         verbose_name_plural = u'Seções'
 
-    def __str__(self):
-        return str(self.title)
+    def __unicode__(self):
+        return unicode(self.title)
 
 
 class ActiveSection(Section):

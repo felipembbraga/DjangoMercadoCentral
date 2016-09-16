@@ -1,0 +1,14 @@
+{
+  "name": "MercadoCentral",
+  "homepage": "https://github.com/felipemendesbraga/DjangoMercadoCentral",
+  "authors": [
+    "Felipe Mendes Braga <felipe.mendes.braga@gmail.com>"
+  ],
+  "description": "",
+  "main": "",
+  "license": "MIT",
+  "private": true,
+  "dependencies": {
+    "tinymce": "4.4.3"
+  }
+}
