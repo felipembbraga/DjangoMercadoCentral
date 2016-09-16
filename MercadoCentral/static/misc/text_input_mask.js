@@ -27,9 +27,9 @@
 
             // maxlength causes a bug in jquery-maskedinput in android
             input.removeAttr('maxlength');
-            console.log(mask);
-            console.log(opts);
-            input.mask(mask, opts);
+
+
+            input.mask(mask.mask, opts);
         },
 
         initMoneyMask: function() {
@@ -56,4 +56,9 @@
 
 $(function(){
     $('body').djangoInputMask();
+    $('body').bind('DOMNodeInserted', '[data-input-mask]', function () {
+        console.log('teste');
+        $('body').djangoInputMask();
+    });
+
 });

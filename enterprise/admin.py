@@ -18,7 +18,7 @@ class ContactInline(admin.TabularInline):
 
     def formfield_for_dbfield(self, db_field, request, **kwargs):
         if db_field.name == 'phone':
-            return db_field.formfield(widget=BRPhoneInput(mask={'mask': '(99)999999999'}))
+            return db_field.formfield(widget=BRPhoneInput(mask={'mask': '(99)99999-9999'}))
         return super(ContactInline, self).formfield_for_dbfield(db_field, request, **kwargs)
 
 
