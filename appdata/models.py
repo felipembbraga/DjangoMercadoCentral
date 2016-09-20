@@ -2,13 +2,10 @@
 
 from __future__ import unicode_literals
 
-import json
-
 from django.core import serializers
 from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from django.forms import model_to_dict
 
 from MercadoCentral.utils import GetSerializeMixin
 from enterprise.models import App
@@ -107,16 +104,22 @@ class ProductImage(models.Model):
 
 # signal para contato
 @receiver(post_save, sender=ProductImage)
-def contact_post_save(sender, instance, created, **kwargs):
+def product_image_post_save(sender, instance, created, **kwargs):
+    if not sender.objects.filter(product=instance.product, main_image=True).exists():
+        instance.main_image = True
+        instance.save()
+        return
     if instance.main_image:
         sender.objects.filter(product=instance.product).exclude(pk=instance.pk).update(main_image=False)
+        return
 
 
 class Highlight(models.Model):
-    enterprise = models.ForeignKey(App, verbose_name='Aplicativo')
+    enterprise = models.ForeignKey(App, verbose_name='aplicativo')
     reference = models.CharField(u'referência', max_length=20)
     title = models.CharField(u'título', max_length=50)
-    description = models.TextField(u'Descrição', null=True, blank=True)
+    description = models.TextField(u'descrição', null=True, blank=True)
     is_active = models.BooleanField(u'ativo', default=False)
-    section = models.ForeignKey(Section)
-    product = models.ForeignKey(Product, null=True, blank=True)
+    section = models.ForeignKey(Section, verbose_name=u'seção')
+    product = models.ForeignKey(Product, verbose_name='produto', null=True, blank=True)
+
