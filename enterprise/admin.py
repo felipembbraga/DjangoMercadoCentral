@@ -4,7 +4,7 @@ from MercadoCentral.site import register
 from MercadoCentral.widgets import MCAdminImageWidget, BRPhoneInput
 from appdata.models import Section
 from enterprise.models import App, Contact
-from input_mask.contrib.localflavor.br.widgets import BRPhoneNumberInput
+from MercadoCentral.widgets import SelectBoxAsRadioWidget
 
 
 class SectionInline(admin.TabularInline):
@@ -19,12 +19,14 @@ class ContactInline(admin.TabularInline):
     def formfield_for_dbfield(self, db_field, request, **kwargs):
         if db_field.name == 'phone':
             return db_field.formfield(widget=BRPhoneInput(mask={'mask': '(99)99999-9999'}))
+        if db_field.name == 'main_contact':
+            return db_field.formfield(widget=SelectBoxAsRadioWidget())
         return super(ContactInline, self).formfield_for_dbfield(db_field, request, **kwargs)
 
 
 @register(App)
 class AppAdmin(admin.ModelAdmin):
-    inlines = [ContactInline, SectionInline,]
+    inlines = [ContactInline, SectionInline, ]
     list_display = ('name', 'image_tag', 'is_active')
     list_filter = ('is_active',)
     fields = ('name', 'code', 'logo', 'is_active')

@@ -57,7 +57,6 @@
 $(function(){
     $('body').djangoInputMask();
     $('body').bind('DOMNodeInserted', '[data-input-mask]', function () {
-        console.log('teste');
         $('body').djangoInputMask();
     });
 

@@ -4,8 +4,9 @@ from django.utils.text import slugify
 from tinymce.widgets import TinyMCE
 
 from MercadoCentral.site import register
-from MercadoCentral.widgets import MCAdminImageWidget
+from MercadoCentral.widgets import MCAdminImageWidget, SelectBoxAsRadioWidget
 from .models import Section, Product, ProductImage
+
 
 
 @register(Section)
@@ -26,6 +27,8 @@ class ProductImageInline(admin.TabularInline):
     def formfield_for_dbfield(self, db_field, request, **kwargs):
         if db_field.name == 'image':
             return db_field.formfield(widget=MCAdminImageWidget())
+        if db_field.name == 'main_image':
+            return db_field.formfield(widget=SelectBoxAsRadioWidget())
         return super(ProductImageInline, self).formfield_for_dbfield(db_field, request, **kwargs)
 
 

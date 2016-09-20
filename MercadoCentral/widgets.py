@@ -1,7 +1,7 @@
 from django import forms
-from django.contrib.admin.widgets import AdminFileWidget
-from input_mask.contrib.localflavor.br.widgets import BRPhoneNumberInput
 from django.conf import settings
+from django.contrib.admin.widgets import AdminFileWidget
+from django.forms.widgets import CheckboxInput
 from input_mask.utils import encode_options
 
 
@@ -14,8 +14,19 @@ class MCAdminImageWidget(AdminFileWidget):
     )
 
 
-class BRPhoneInput(forms.TextInput):
+class SelectBoxAsRadioWidget(CheckboxInput):
+    def __init__(self, attrs=None, check_test=None):
+        attrs = attrs or {}
+        attrs.update({'class': 'as-radio'})
+        super(SelectBoxAsRadioWidget, self).__init__(attrs, check_test)
 
+    class Media:
+        js = (
+            '%smisc/as_radio_checkbox.js' % settings.STATIC_URL,
+        )
+
+
+class BRPhoneInput(forms.TextInput):
     class Media:
         js = (
             '%sbower_components/jquery/dist/jquery.min.js' % settings.STATIC_URL,

@@ -24,7 +24,7 @@ LOCAL = lambda x: os.path.join(BASE_DIR, x)
 SECRET_KEY = 'ic%p!!l9+u%3)@#!g-urh11*s(q9(ps4k94g8ph0juikdb^74m'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = []
 
@@ -176,3 +176,8 @@ REST_FRAMEWORK = {
 TINYMCE_DEFAULT_CONFIG = {
     'plugins': 'advlist'
 }
+
+try:
+    from local_settings import *
+except:
+    pass

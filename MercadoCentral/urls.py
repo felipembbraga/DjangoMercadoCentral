@@ -24,6 +24,7 @@ from appdata.models import Product
 from appdata.views import ProductViewSet, SectionViewSet
 from enterprise.views import AppViewSet
 from .site import site as mc_site
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 
 # Serializers define the API representation.
@@ -68,3 +69,5 @@ if settings.DEBUG:
         url(r'^media/(?P<path>.*)$', serve, {
             'document_root': settings.MEDIA_ROOT}),
     ]
+
+    urlpatterns += staticfiles_urlpatterns()
