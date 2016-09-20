@@ -7,13 +7,14 @@ from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils.safestring import mark_safe
+from django.utils.text import slugify
 
 from MercadoCentral.utils import GetSerializeMixin
 
 
 class App(models.Model, GetSerializeMixin):
     name = models.CharField('nome', max_length=150)
-    code = models.CharField(u'código', max_length=100)
+    code = models.CharField(u'código', max_length=100, blank=True)
     logo = models.ImageField('logomarca', upload_to='app_logo')
     is_active = models.BooleanField('ativo', default=True)
 
@@ -26,6 +27,11 @@ class App(models.Model, GetSerializeMixin):
 
         return mark_safe(u'<img src="%s" width="100"/>' % (settings.MEDIA_URL + str(self.logo)))
 
+    def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
+        if not self.logo or self.logo == '':
+            self.logo = slugify(self.name)
+        super(App, self).save(force_insert, force_update, using, update_fields)
+
     @property
     def sections(self):
         serializer = serializers.serialize('json', self.section_set.all(),
@@ -37,10 +43,14 @@ class App(models.Model, GetSerializeMixin):
 
 class Contact(models.Model):
     app = models.ForeignKey(App, verbose_name='App')
-    name = models.CharField(max_length=100)
-    phone = models.CharField(max_length=15)
-    email = models.EmailField()
-    main_contact = models.BooleanField()
+    name = models.CharField('nome', max_length=100)
+    phone = models.CharField('telefone', max_length=15)
+    email = models.EmailField('email')
+    main_contact = models.BooleanField('contato principal')
+
+    class Meta:
+        verbose_name='Contato'
+        verbose_name_plural='Contatos'
 
 
 # signal para contato

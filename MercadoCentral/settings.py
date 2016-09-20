@@ -31,7 +31,7 @@ ALLOWED_HOSTS = []
 
 # Application definition
 LOCAL_APPS = [
-    'enterprise',
+    'enterprise.apps.EnterpriseConfig',
     'appdata.apps.AppdataConfig'
 ]
 
@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_wysiwyg',
+    'input_mask',
     'rest_framework',
     'tinymce',
 ]
@@ -162,6 +163,9 @@ MEDIA_URL = '/media/'
 STATIC_ROOT = LOCAL('static')
 
 STATIC_URL = '/static/'
+STATICFILES_DIRS = [
+    LOCAL('MercadoCentral/static')
+]
 
 REST_FRAMEWORK = {
     # 'DEFAULT_PERMISSION_CLASSES': ('rest_framework.permissions.IsAdminUser',),
