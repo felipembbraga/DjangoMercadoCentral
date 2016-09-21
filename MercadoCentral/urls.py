@@ -17,6 +17,7 @@ from django.conf import settings
 from django.conf.urls import url, include
 from django.contrib import admin
 from django.contrib.auth.models import User
+from django.views.generic.base import RedirectView
 from django.views.static import serve
 from rest_framework import routers, serializers
 
@@ -56,6 +57,7 @@ router.register(r'apps', AppViewSet)
 router.register(r'sections', SectionViewSet)
 
 urlpatterns = [
+    url(r'^$', RedirectView.as_view(url='mc_admin', permanent=False)),
     url(r'^api/', include(router.urls)),
     url(r'^admin/', admin.site.urls),
     url(r'^mc_admin/', mc_site.urls),

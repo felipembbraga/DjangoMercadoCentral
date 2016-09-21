@@ -1,4 +1,13 @@
 $(document).ready(function () {
+    $('.ionicon-input input').on('change', function(event) {
+        var valor = $(this).val() || 'ion-help'
+       var button = $(this).siblings('.input-group-btn').find('.show-icon i');
+       button.removeAttr('class').addClass('icon ' + valor);
+
+       console.log(button);
+    });
+    $('.ionicon-input input').trigger('change');
+
     $('.button-icon').bind('click', function(event) {
         var selectedIcon = $(this).data('icon');
 
@@ -6,6 +15,7 @@ $(document).ready(function () {
         var input = modal.data('id-input');
         console.log('#' + input);
         $('#' + input).val(selectedIcon);
+        $('#' + input).trigger('change');
         modal.modal('hide');
       });
     $('.iconModal').on('show.bs.modal', function (event) {

@@ -4,7 +4,6 @@ import json
 
 from django import forms
 from django.template.loader import render_to_string
-from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 
 
@@ -23,7 +22,8 @@ class IoniconsInput(forms.TextInput):
         css = {
             'all': (
                 'bower_components/bootstrap/dist/css/bootstrap.min.css',
-                'bower_components/Ionicons/css/ionicons.css'
+                'bower_components/Ionicons/css/ionicons.css',
+                'css/main.css'
             )
         }
 
@@ -47,4 +47,3 @@ class IoniconsInput(forms.TextInput):
         }
 
         return mark_safe(render_to_string(self.template, context=context))
-        # return format_html(component, super(IoniconsInput, self).render(name, value, attrs), name,)
