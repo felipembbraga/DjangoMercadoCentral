@@ -9,3 +9,12 @@ p.deletelink-box, p.deletelink-box > a {
     -moz-box-sizing: content-box;
     box-sizing: content-box;
 }
+
+.show-icon:hover {
+    cursor: auto;
+}
+
+.get-ionicon {
+    background-color: #417690;
+    color: white;
+}

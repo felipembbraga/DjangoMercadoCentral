@@ -8,5 +8,8 @@
     <li>
         <a href="{% url 'mc_admin:appdata_section_changelist' %}?enterprise__name={{original.name}}" class="historylink">Seções</a>
     </li>
+<li>
+        <a href="{% url 'mc_admin:appdata_highlight_changelist' %}?enterprise__name={{original.name}}" class="historylink">Destaques</a>
+    </li>
 
 {% endblock %}

@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.utils.text import slugify
 
 from MercadoCentral.site import register
 from MercadoCentral.widgets import MCAdminImageWidget, BRPhoneInput
@@ -31,7 +32,7 @@ class ContactInline(admin.TabularInline):
 
 @register(App)
 class AppAdmin(admin.ModelAdmin):
-    inlines = [ContactInline, SectionInline, ]
+    inlines = [ContactInline, ]
     list_display = ('name', 'image_tag', 'is_active')
     list_filter = ('is_active',)
     fields = ('name', 'code', 'logo', 'is_active')
@@ -51,3 +52,6 @@ class AppAdmin(admin.ModelAdmin):
         if db_field.name == 'logo':
             return db_field.formfield(widget=MCAdminImageWidget())
         return super(AppAdmin, self).formfield_for_dbfield(db_field, request, **kwargs)
+
+
+

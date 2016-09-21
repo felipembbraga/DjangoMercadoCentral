@@ -18,8 +18,12 @@ class App(models.Model, GetSerializeMixin):
     logo = models.ImageField('logomarca', upload_to='app_logo')
     is_active = models.BooleanField('ativo', default=True)
 
+    class Meta:
+        verbose_name = u'App'
+        verbose_name_plural = u'Apps'
+
     def __unicode__(self):
-        return unicode(self.name)
+        return self.name
 
     def image_tag(self):
         if not self.logo:
@@ -27,10 +31,6 @@ class App(models.Model, GetSerializeMixin):
 
         return mark_safe(u'<img src="%s" width="100"/>' % (settings.MEDIA_URL + str(self.logo)))
 
-    def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
-        if not self.logo or self.logo == '':
-            self.logo = slugify(self.name)
-        super(App, self).save(force_insert, force_update, using, update_fields)
 
     @property
     def sections(self):
@@ -39,6 +39,20 @@ class App(models.Model, GetSerializeMixin):
         return self.serialize(serializer)
 
     image_tag.short_description = 'Logomarca'
+
+    def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
+        if not self.code or len(self.code) == 0:
+            self.code = slugify(self.name)
+        super(App, self).save(force_insert, force_update, using, update_fields)
+
+
+# signal para contato
+@receiver(post_save, sender=App)
+def app_post_save(sender, instance, created, **kwargs):
+    if not instance.code or len(instance.code) == 0:
+        instance.code = slugify(instance.name)
+        instance.save()
+
 
 
 class Contact(models.Model):

@@ -1,7 +1,9 @@
 from django import forms
 from django.conf import settings
 from django.contrib.admin.widgets import AdminFileWidget
+from django.forms.utils import flatatt
 from django.forms.widgets import CheckboxInput
+from django.utils.html import format_html
 from input_mask.utils import encode_options
 
 
@@ -51,5 +53,31 @@ class BRPhoneInput(forms.TextInput):
         attrs = attrs or {}
         attrs['data-input-mask'] = encode_options(self.mask)
         return super(BRPhoneInput, self).render(name, value, attrs=attrs)
+
+
+class ReadOnlyInput(forms.TextInput):
+
+    def __init__(self, obj, attrs=None):
+        self.obj = obj
+        super(ReadOnlyInput, self).__init__(attrs)
+
+    def render(self, name, value, attrs=None):
+        if value is None:
+            value = ''
+        final_attrs = self.build_attrs(attrs, type='hidden', name=name)
+        print(value)
+        return format_html(
+            '<p>{}</p><input {} value="{}"/>',
+            self.obj,
+            flatatt(final_attrs),
+            value
+        )
+
+
+class ReadOnlyFormField(forms.IntegerField):
+    widget = ReadOnlyInput
+    def __init__(self, max_value=None, min_value=None, *args, **kwargs):
+        super(ReadOnlyFormField, self).__init__(max_value, min_value, *args, **kwargs)
+
 
 

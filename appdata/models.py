@@ -34,9 +34,10 @@ class Section(models.Model):
     class Meta:
         verbose_name = u'Seção'
         verbose_name_plural = u'Seções'
+        unique_together = ('enterprise', 'reference')
 
     def __unicode__(self):
-        return unicode(self.title)
+        return self.title
 
 
 class ActiveSection(Section):
@@ -60,7 +61,7 @@ class Product(models.Model, GetSerializeMixin):
         unique_together = ('enterprise', 'reference')
 
     def __unicode__(self):
-        return unicode(self.title)
+        return self.title
 
     @property
     def images(self):
@@ -90,13 +91,16 @@ class ActiveProduct(Product):
 def product_directory_path(instance, filename):
     return 'product_{0}/{1}'.format(instance.product.id, filename)
 
-
-class ProductImage(models.Model):
-    product = models.ForeignKey(Product)
+class AppImage(models.Model):
     image = models.ImageField(u'imagem', upload_to=product_directory_path)
     caption = models.CharField(u'legenda', max_length=100)
     main_image = models.BooleanField(u'imagem inicial', default=False)
 
+    class Meta:
+        abstract = True
+
+class ProductImage(AppImage):
+    product = models.ForeignKey(Product)
     class Meta:
         verbose_name = 'imagem do produto'
         verbose_name_plural = 'imagens do produto'
@@ -115,11 +119,36 @@ def product_image_post_save(sender, instance, created, **kwargs):
 
 
 class Highlight(models.Model):
-    enterprise = models.ForeignKey(App, verbose_name='aplicativo')
+    enterprise = models.ForeignKey(App, verbose_name='aplicativo', related_name='app_highlights')
     reference = models.CharField(u'referência', max_length=20)
     title = models.CharField(u'título', max_length=50)
     description = models.TextField(u'descrição', null=True, blank=True)
-    is_active = models.BooleanField(u'ativo', default=False)
-    section = models.ForeignKey(Section, verbose_name=u'seção')
+    is_active = models.BooleanField(u'ativo', default=True)
+    section = models.ForeignKey(Section, verbose_name=u'seção', null=True, blank=True)
     product = models.ForeignKey(Product, verbose_name='produto', null=True, blank=True)
 
+    class Meta:
+        verbose_name = 'Destaque'
+
+    @property
+    def app(self):
+        return self.enterprise.name
+
+
+class HighlightImage(AppImage):
+    highlight = models.ForeignKey(Highlight, verbose_name='destaque')
+
+    class Meta:
+        verbose_name = 'Imagem para destaque'
+        verbose_name_plural = 'Imagens para destaque'
+
+
+@receiver(post_save, sender=HighlightImage)
+def product_image_post_save(sender, instance, created, **kwargs):
+    if not sender.objects.filter(product=instance.product, main_image=True).exists():
+        instance.main_image = True
+        instance.save()
+        return
+    if instance.main_image:
+        sender.objects.filter(product=instance.product).exclude(pk=instance.pk).update(main_image=False)
+        return

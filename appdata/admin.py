@@ -11,10 +11,10 @@ from tinymce.widgets import TinyMCE
 
 from MercadoCentral.site import register
 from MercadoCentral.utils import unquote
-from MercadoCentral.widgets import MCAdminImageWidget, SelectBoxAsRadioWidget
+from MercadoCentral.widgets import MCAdminImageWidget, SelectBoxAsRadioWidget, ReadOnlyInput, ReadOnlyFormField
 from appdata.widgets import IoniconsInput
 from enterprise.models import App
-from .models import Section, Product, ProductImage
+from .models import Section, Product, ProductImage, Highlight, HighlightImage
 
 
 def get_changelist_filter(request):
@@ -22,18 +22,67 @@ def get_changelist_filter(request):
     return dict((x, y) for x, y in map(lambda x: x.replace('+', ' ').split('='), url_get.split('&')))
 
 
+def get_formfield(field_name):
+    def function(obj, db_field, request):
+        initial = obj.get_changeform_initial_data(request)
+        if initial.get(field_name):
+            field = db_field.formfield(widget=ReadOnlyInput(obj=initial.get(field_name)))
+            return field
+        return None
+    return function
+
+def formfield_for_enterprise(obj, db_field, request):
+    initial = obj.get_changeform_initial_data(request)
+    if initial.get('enterprise'):
+        field = db_field.formfield(widget=ReadOnlyInput(obj=initial.get('enterprise')))
+        return field
+    return None
+
+
 class AppFilterListModelAdmin(admin.ModelAdmin):
+    def __init__(self, model, admin_site):
+        super(AppFilterListModelAdmin, self).__init__(model, admin_site)
+        self.filters = {}
+
     def get_changeform_initial_data(self, request):
         initial = super(AppFilterListModelAdmin, self).get_changeform_initial_data(request)
         if not request.GET.get('_changelist_filters'):
             return initial
-        filters = get_changelist_filter(request)
-        for key in filters.keys():
-            if key == 'enterprise__name':
-                enterprise = App.objects.filter(name=unquote(filters.get(key))).first()
-                if enterprise:
-                    initial.update({'enterprise': enterprise})
+        self.filters = get_changelist_filter(request)
+        if 'enterprise__name' in self.filters.keys():
+            enterprise = App.objects.filter(name=unquote(self.filters.get('enterprise__name'))).first()
+            if enterprise:
+                initial.update({'enterprise': enterprise})
         return initial
+
+    def formfield_for_dbfield(self, db_field, request, **kwargs):
+        field = None
+        if hasattr(self, 'formfield_for_%s' % db_field.name):
+            field = getattr(self, 'formfield_for_%s' % db_field.name)(db_field, request)
+        return field or super(AppFilterListModelAdmin, self).formfield_for_dbfield(db_field=db_field, request=request, **kwargs)
+
+
+class EnterpriseFilter(admin.FieldListFilter):
+    def expected_parameters(self):
+        return [self.parameter_name]
+
+    def choices(self, changelist):
+        pass
+
+    title = 'Por app'
+    parameter_name = 'enterprise__name'
+
+
+class ImageInline(admin.TabularInline):
+    extra = 0
+    min_num = 1
+
+    def formfield_for_dbfield(self, db_field, request, **kwargs):
+        if db_field.name == 'image':
+            return db_field.formfield(widget=MCAdminImageWidget())
+        if db_field.name == 'main_image':
+            return db_field.formfield(widget=SelectBoxAsRadioWidget())
+        return super(ImageInline, self).formfield_for_dbfield(db_field, request, **kwargs)
 
 
 @register(Section)
@@ -46,10 +95,10 @@ class SectionAdmin(AppFilterListModelAdmin):
     def render_change_form(self, request, context, add=False, change=False, form_url='', obj=None):
         return super(SectionAdmin, self).render_change_form(request, context, add, change, form_url, obj)
 
-    def formfield_for_dbfield(self, db_field, request, **kwargs):
-        if db_field.name == 'icon':
-            return db_field.formfield(widget=IoniconsInput())
-        return super(SectionAdmin, self).formfield_for_dbfield(db_field, request, **kwargs)
+    formfield_for_enterprise = get_formfield('enterprise')
+
+    def formfield_for_icon(self, db_field, *args, **kwargs):
+        return db_field.formfield(widget=IoniconsInput())
 
     def get_readonly_fields(self, request, obj=None):
         if obj is None:
@@ -63,7 +112,6 @@ class SectionAdmin(AppFilterListModelAdmin):
         ]
         # raise Exception(my_urls)
         return my_urls + urls
-        return urls
 
     def icon_list_view(self, request):
         from django.conf import settings
@@ -80,17 +128,8 @@ class SectionAdmin(AppFilterListModelAdmin):
             return TemplateResponse(request, 'list_icons.html', context)
 
 
-class ProductImageInline(admin.TabularInline):
+class ProductImageInline(ImageInline):
     model = ProductImage
-    extra = 0
-    min_num = 1
-
-    def formfield_for_dbfield(self, db_field, request, **kwargs):
-        if db_field.name == 'image':
-            return db_field.formfield(widget=MCAdminImageWidget())
-        if db_field.name == 'main_image':
-            return db_field.formfield(widget=SelectBoxAsRadioWidget())
-        return super(ProductImageInline, self).formfield_for_dbfield(db_field, request, **kwargs)
 
 
 @register(Product)
@@ -103,13 +142,13 @@ class ProductAdmin(AppFilterListModelAdmin):
     readonly_fields = ['enterprise', 'reference']
     inlines = [ProductImageInline, ]
 
-    def formfield_for_dbfield(self, db_field, request, **kwargs):
-        if db_field.name == 'description':
-            return db_field.formfield(widget=TinyMCE(
-                attrs={'cols': 80, 'rows': 15},
-                mce_attrs={'external_link_list_url': reverse('tinymce-linklist')},
-            ))
-        return super(ProductAdmin, self).formfield_for_dbfield(db_field, request, **kwargs)
+    formfield_for_enterprise = get_formfield('enterprise')
+
+    def formfield_for_description(self, db_field, *args, **kwargs):
+        return db_field.formfield(widget=TinyMCE(
+            attrs={'cols': 80, 'rows': 15},
+            mce_attrs={'external_link_list_url': reverse('tinymce-linklist')},
+        ))
 
     def get_inline_instances(self, request, obj=None):
         return obj and super(ProductAdmin, self).get_inline_instances(request, obj) or []
@@ -137,3 +176,35 @@ class ProductAdmin(AppFilterListModelAdmin):
             if Product.objects.filter(reference=obj.reference, enterprise=obj.enterprise).exists():
                 obj.reference += '-'
         super(ProductAdmin, self).save_model(request, obj, form, change)
+
+
+class HighlightImageInline(ImageInline):
+    model = HighlightImage
+
+
+@register(Highlight)
+class HighlightAdmin(AppFilterListModelAdmin):
+    list_display = ('title', 'description', 'enterprise', 'section', 'product', 'is_active')
+    list_filter = (
+        'enterprise__name',
+        'section',
+        'is_active'
+    )
+    inlines = [HighlightImageInline, ]
+
+    def get_changeform_initial_data(self, request):
+        initial = super(HighlightAdmin, self).get_changeform_initial_data(request)
+        if 'section__id__exact' in self.filters.keys():
+            section = Section.objects.filter(pk=unquote(self.filters.get('section__id__exact'))).first()
+            if section:
+                initial.update({'section': section})
+        return initial
+
+    def get_form(self, request, obj=None, **kwargs):
+        form = super(HighlightAdmin, self).get_form(request, obj, **kwargs)
+        if obj is not None:
+            form.base_fields['sections'].queryset = Section.objects.filter(enterprise=obj.enterprise)
+        return form
+
+    formfield_for_enterprise = get_formfield('enterprise')
+    formfield_for_section = get_formfield('section')
