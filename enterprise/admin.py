@@ -3,6 +3,7 @@ from django.contrib import admin
 from MercadoCentral.site import register
 from MercadoCentral.widgets import MCAdminImageWidget, BRPhoneInput
 from appdata.models import Section
+from appdata.widgets import IoniconsInput
 from enterprise.models import App, Contact
 from MercadoCentral.widgets import SelectBoxAsRadioWidget
 
@@ -10,6 +11,10 @@ from MercadoCentral.widgets import SelectBoxAsRadioWidget
 class SectionInline(admin.TabularInline):
     model = Section
     extra = 0
+    def formfield_for_dbfield(self, db_field, request, **kwargs):
+        if db_field.name == 'icon':
+            return db_field.formfield(widget=IoniconsInput())
+        return super(SectionInline, self).formfield_for_dbfield(db_field, request, **kwargs)
 
 
 class ContactInline(admin.TabularInline):
@@ -31,6 +36,7 @@ class AppAdmin(admin.ModelAdmin):
     list_filter = ('is_active',)
     fields = ('name', 'code', 'logo', 'is_active')
     readonly_fields = ('code',)
+    # change_form_template = 'enterprise_admin/change_form.html'
 
     def get_inline_instances(self, request, obj=None):
         return obj and super(AppAdmin, self).get_inline_instances(request, obj) or []

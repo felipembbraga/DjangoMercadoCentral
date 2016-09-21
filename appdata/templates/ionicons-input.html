@@ -1,0 +1,27 @@
+<div class="input-group" style="width: 20em">
+    {{ input }}
+    <span class="input-group-btn">
+            <button class="btn btn-default get-ionicon" type="button" data-toggle="modal"
+                    data-target="#iconModal{{name}}"><i class="icon ion-search"></i></button>
+          </span>
+</div>
+<div class="modal fade iconModal" data-id-input="id_{{name}}" id="iconModal{{name}}" tabindex="-1" role="dialog" aria-labelledby="Icon Modal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Escolha o icone</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row pre-scrollable">
+                    {% for icon in icons %}
+                    <div class="col-md-2">
+                        <button type="button" class="btn btn-block btn-default button-icon" data-icon="{{icon}}"> <i class="icon {{icon}}"></i></button>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

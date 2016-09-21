@@ -25,6 +25,9 @@ class SelectBoxAsRadioWidget(CheckboxInput):
             '%smisc/as_radio_checkbox.js' % settings.STATIC_URL,
         )
 
+class Select:
+    pass
+
 
 class BRPhoneInput(forms.TextInput):
     class Media:
@@ -48,3 +51,5 @@ class BRPhoneInput(forms.TextInput):
         attrs = attrs or {}
         attrs['data-input-mask'] = encode_options(self.mask)
         return super(BRPhoneInput, self).render(name, value, attrs=attrs)
+
+
