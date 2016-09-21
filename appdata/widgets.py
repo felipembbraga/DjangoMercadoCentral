@@ -16,7 +16,8 @@ class IoniconsInput(forms.TextInput):
         js = (
             'bower_components/jquery/dist/jquery.min.js',
             'bower_components/bootstrap/dist/js/bootstrap.min.js',
-            'appdata/js/ionicons_input.js'
+            'bower_components/jquery.scrollTo/jquery.scrollTo.min.js',
+            'appdata/js/ionicons_input.js',
 
         )
         css = {
