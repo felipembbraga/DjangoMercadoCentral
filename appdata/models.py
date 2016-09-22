@@ -6,15 +6,12 @@ from django.core import serializers
 from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.utils.encoding import python_2_unicode_compatible
 
 from MercadoCentral.utils import GetSerializeMixin
 from enterprise.models import App
 
-SECTION_TYPES = [
-    (0, 'Lista de produtos'),
-    (1, 'Página estática'),
-    (2, 'Contato'),
-]
+
 
 
 class ActiveManager(models.Manager):
@@ -23,7 +20,13 @@ class ActiveManager(models.Manager):
         return queryset.filter(is_active=True)
 
 
+@python_2_unicode_compatible
 class Section(models.Model):
+    SECTION_TYPES = [
+        (0, 'Lista de produtos'),
+        (1, 'Página estática'),
+        (2, 'Contato'),
+    ]
     enterprise = models.ForeignKey(App, verbose_name='Aplicativo')
     reference = models.CharField(u'referência', max_length=20)
     title = models.CharField(u'título', max_length=50)
@@ -36,7 +39,7 @@ class Section(models.Model):
         verbose_name_plural = u'Seções'
         unique_together = ('enterprise', 'reference')
 
-    def __unicode__(self):
+    def __str__(self):
         return self.title
 
 
@@ -47,6 +50,7 @@ class ActiveSection(Section):
         proxy = True
 
 
+@python_2_unicode_compatible
 class Product(models.Model, GetSerializeMixin):
     enterprise = models.ForeignKey(App, verbose_name='Aplicativo')
     reference = models.CharField(u'referência', max_length=20)
@@ -60,7 +64,7 @@ class Product(models.Model, GetSerializeMixin):
         verbose_name = u'Produto'
         unique_together = ('enterprise', 'reference')
 
-    def __unicode__(self):
+    def __str__(self):
         return self.title
 
     @property
@@ -91,6 +95,7 @@ class ActiveProduct(Product):
 def product_directory_path(instance, filename):
     return 'product_{0}/{1}'.format(instance.product.id, filename)
 
+
 class AppImage(models.Model):
     image = models.ImageField(u'imagem', upload_to=product_directory_path)
     caption = models.CharField(u'legenda', max_length=100)
@@ -117,6 +122,8 @@ def product_image_post_save(sender, instance, created, **kwargs):
         sender.objects.filter(product=instance.product).exclude(pk=instance.pk).update(main_image=False)
         return
 
+def highlight_directory_path(instance, filename):
+    return 'highlight_{0}/{1}-{2}'.format(instance.id, instance.id, filename)
 
 class Highlight(models.Model):
     enterprise = models.ForeignKey(App, verbose_name='aplicativo', related_name='app_highlights')
@@ -126,13 +133,23 @@ class Highlight(models.Model):
     is_active = models.BooleanField(u'ativo', default=True)
     section = models.ForeignKey(Section, verbose_name=u'seção', null=True, blank=True)
     product = models.ForeignKey(Product, verbose_name='produto', null=True, blank=True)
+    image = models.ImageField(upload_to=highlight_directory_path)
 
     class Meta:
         verbose_name = 'Destaque'
 
     @property
-    def app(self):
-        return self.enterprise.name
+    def link(self):
+        url = '/app/%s'
+        if self.product:
+            return url % ('view-product/%d' % self.product.pk)
+        return url % 'home'
+
+
+class ActiveHighlight(Highlight):
+    objects = ActiveManager()
+    class Meta:
+        proxy = True
 
 
 class HighlightImage(AppImage):

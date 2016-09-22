@@ -22,7 +22,7 @@ from django.views.static import serve
 from rest_framework import routers, serializers
 
 from appdata.models import Product
-from appdata.views import ProductViewSet, SectionViewSet
+from appdata.views import ProductViewSet, SectionViewSet, HighlightViewSet
 from enterprise.views import AppViewSet
 from .site import site as mc_site
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
@@ -34,27 +34,13 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
         model = User
         fields = ('url', 'username', 'email', 'is_staff')
 
-
-class ProductSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = Product
-        fields = ['id',
-                  'reference',
-                  'title',
-                  'short_description',
-                  'description',
-                  'is_active',
-                  'enterprise',
-                  'get_images',
-                  'get_sections',
-                  'sections']
-
-
 # Routers provide an easy way of automatically determining the URL conf.
 router = routers.DefaultRouter()
 router.register(r'products', ProductViewSet)
 router.register(r'apps', AppViewSet)
 router.register(r'sections', SectionViewSet)
+router.register(r'highlights', HighlightViewSet)
+
 
 urlpatterns = [
     url(r'^$', RedirectView.as_view(url='mc_admin', permanent=False)),

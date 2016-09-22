@@ -1,13 +1,10 @@
-from rest_framework.decorators import list_route
-from rest_framework.response import Response
-
 from MercadoCentral.viewset import MCReadOnlyModelViewSet
-from appdata.models import ActiveSection, ActiveProduct
-from appdata.serializers import ProductSerializer, SectionSerializer
+from appdata.models import Product, Section, Highlight
+from appdata.serializers import ProductSerializer, SectionSerializer, HighlightSerializer
 
 
 class ProductViewSet(MCReadOnlyModelViewSet):
-    queryset = ActiveProduct.objects.all()
+    queryset = Product.objects.all()
     serializer_class = ProductSerializer
 
     # @list_route(methods=['get'])
@@ -30,6 +27,10 @@ class ProductViewSet(MCReadOnlyModelViewSet):
 
 
 class SectionViewSet(MCReadOnlyModelViewSet):
-    queryset = ActiveSection.objects.all()
+    queryset = Section.objects.all()
     serializer_class = SectionSerializer
+
+class HighlightViewSet(MCReadOnlyModelViewSet):
+    queryset = Highlight.objects.all()
+    serializer_class = HighlightSerializer
 

@@ -190,7 +190,7 @@ class HighlightAdmin(AppFilterListModelAdmin):
         'section',
         'is_active'
     )
-    inlines = [HighlightImageInline, ]
+    # inlines = [HighlightImageInline, ]
 
     def get_changeform_initial_data(self, request):
         initial = super(HighlightAdmin, self).get_changeform_initial_data(request)
@@ -203,7 +203,13 @@ class HighlightAdmin(AppFilterListModelAdmin):
     def get_form(self, request, obj=None, **kwargs):
         form = super(HighlightAdmin, self).get_form(request, obj, **kwargs)
         if obj is not None:
-            form.base_fields['sections'].queryset = Section.objects.filter(enterprise=obj.enterprise)
+            form.base_fields['section'].queryset = Section.objects.filter(enterprise=obj.enterprise)
+        else:
+            initial = self.get_changeform_initial_data(request)
+            if initial.get('enterprise'):
+                form.base_fields['section'].queryset = Section.objects.filter(enterprise=initial.get('enterprise'))
+                form.base_fields['product'].queryset = Product.objects.filter(enterprise=initial.get('enterprise'))
+
         return form
 
     formfield_for_enterprise = get_formfield('enterprise')
