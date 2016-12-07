@@ -13,6 +13,7 @@ Including another URLconf
     1. Import the include() function: from django.conf.urls import url, include
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
+
 from django.conf import settings
 from django.conf.urls import url, include
 from django.contrib import admin
@@ -26,7 +27,7 @@ from appdata.views import ProductViewSet, SectionViewSet, HighlightViewSet
 from enterprise.views import AppViewSet
 from .site import site as mc_site
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
-
+import re
 
 # Serializers define the API representation.
 class UserSerializer(serializers.HyperlinkedModelSerializer):
@@ -41,14 +42,13 @@ router.register(r'apps', AppViewSet)
 router.register(r'sections', SectionViewSet)
 router.register(r'highlights', HighlightViewSet)
 
-
 urlpatterns = [
-    url(r'^$', RedirectView.as_view(url='mc_admin', permanent=False)),
-    url(r'^api/', include(router.urls)),
-    url(r'^admin/', admin.site.urls),
-    url(r'^mc_admin/', mc_site.urls),
-    url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
-    url(r'^tinymce/', include('tinymce.urls')),
+    url(r'^%s$'%settings.BASE_URL, RedirectView.as_view(url='mc_admin', permanent=False)),
+    url(r'^%sapi/'%settings.BASE_URL, include(router.urls)),
+    url(r'^%sadmin/'%settings.BASE_URL, admin.site.urls),
+    url(r'^%smc_admin/'%settings.BASE_URL, mc_site.urls),
+    url(r'^%sapi-auth/'%settings.BASE_URL, include('rest_framework.urls', namespace='rest_framework')),
+    url(r'^%stinymce/'%settings.BASE_URL, include('tinymce.urls')),
 ]
 
 if settings.DEBUG:

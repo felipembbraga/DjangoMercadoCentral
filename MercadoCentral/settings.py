@@ -177,6 +177,8 @@ TINYMCE_DEFAULT_CONFIG = {
     'plugins': 'advlist'
 }
 
+BASE_URL = ''
+
 try:
     from local_settings import *
 except:
