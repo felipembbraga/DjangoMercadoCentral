@@ -18,22 +18,22 @@ from django.conf import settings
 from django.conf.urls import url, include
 from django.contrib import admin
 from django.contrib.auth.models import User
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.views.generic.base import RedirectView
 from django.views.static import serve
 from rest_framework import routers, serializers
 
-from appdata.models import Product
 from appdata.views import ProductViewSet, SectionViewSet, HighlightViewSet
 from enterprise.views import AppViewSet
 from .site import site as mc_site
-from django.contrib.staticfiles.urls import staticfiles_urlpatterns
-import re
+
 
 # Serializers define the API representation.
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = User
         fields = ('url', 'username', 'email', 'is_staff')
+
 
 # Routers provide an easy way of automatically determining the URL conf.
 router = routers.DefaultRouter()
@@ -43,12 +43,12 @@ router.register(r'sections', SectionViewSet)
 router.register(r'highlights', HighlightViewSet)
 
 urlpatterns = [
-    url(r'^%s$'%settings.BASE_URL, RedirectView.as_view(url='mc_admin', permanent=False)),
-    url(r'^%sapi/'%settings.BASE_URL, include(router.urls)),
-    url(r'^%sadmin/'%settings.BASE_URL, admin.site.urls),
-    url(r'^%smc_admin/'%settings.BASE_URL, mc_site.urls),
-    url(r'^%sapi-auth/'%settings.BASE_URL, include('rest_framework.urls', namespace='rest_framework')),
-    url(r'^%stinymce/'%settings.BASE_URL, include('tinymce.urls')),
+    url(r'^%s$' % settings.BASE_URL, RedirectView.as_view(url='mc_admin', permanent=False)),
+    url(r'^%sapi/' % settings.BASE_URL, include(router.urls)),
+    url(r'^%sadmin/' % settings.BASE_URL, admin.site.urls),
+    url(r'^%smc_admin/' % settings.BASE_URL, mc_site.urls),
+    url(r'^%sapi-auth/' % settings.BASE_URL, include('rest_framework.urls', namespace='rest_framework')),
+    url(r'^%stinymce/' % settings.BASE_URL, include('tinymce.urls')),
 ]
 
 if settings.DEBUG:

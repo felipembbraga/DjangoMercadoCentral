@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from colorfield.fields import ColorField
 from django.conf import settings
 from django.core import serializers
 from django.db import models
@@ -17,6 +18,8 @@ class App(models.Model, GetSerializeMixin):
     code = models.CharField(u'código', max_length=100, blank=True)
     logo = models.ImageField('logomarca', upload_to='app_logo')
     is_active = models.BooleanField('ativo', default=True)
+    primary_color = ColorField(default='#CCCCCC')
+    secondary_color = ColorField(default='#CD0000')
 
     class Meta:
         verbose_name = u'App'

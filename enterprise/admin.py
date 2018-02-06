@@ -35,7 +35,7 @@ class AppAdmin(admin.ModelAdmin):
     inlines = [ContactInline, ]
     list_display = ('name', 'image_tag', 'is_active')
     list_filter = ('is_active',)
-    fields = ('name', 'code', 'logo', 'is_active')
+    fields = ('name', 'code', 'logo', 'is_active', 'primary_color', 'secondary_color')
     readonly_fields = ('code',)
     # change_form_template = 'enterprise_admin/change_form.html'
 
